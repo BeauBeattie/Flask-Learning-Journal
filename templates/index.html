@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="entry-list">
+        <article>
+        {% if entries.count() %}
+            {% for entry in entries %}
+                <article>
+                    <h2><a href="{{ url_for('detail', slug=entry.slug) }}">{{ entry.title }}</a></h2>
+                    <time datetime="datetime">{{ entry.date.strftime('%B %d, %Y') }}</time>
+                    <p>
+                    {% for tag in entry.get_tags() %} 
+                        <a class="button icon-left" href="{{ url_for('tags', slug=tag.slug) }}"><span>{{ tag.tag }}</span> <i class="material-icons">tag</i></a>&nbsp;
+                    {% endfor %}
+                    </p>
+                </article>
+            {% endfor %}
+        {% else %}
+        <h2>Sorry! No posts to show right now.</h2>
+    {% endif %}
+{% endblock %}

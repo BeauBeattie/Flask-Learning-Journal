@@ -1,0 +1,14 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="new-entry">
+        <h2>Tags</h2>
+        <p>
+        {% for tag in unique_tags %}
+          <a class="button icon-left" href="{{ url_for('tags', slug=tag.slug) }}"><span>{{ tag.tag }}</span> <i class="material-icons">tag</i></a>&nbsp;
+        {% endfor %}
+        </p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="entry-list">
+        <article>
+            <h1>Entries containing:<a class="button icon-left" href="{{ url_for('tags', slug=slug) }}"><span>{{ slug}}</span> <i class="material-icons">tag</i></a>&nbsp;</h1>
+        </article>
+        {% for entry in entries %}
+            <article>
+                <h2><a href="{{ url_for('detail', slug=entry.entry.slug) }}">{{ entry.entry.title }}</a></h2>
+                <time datetime="datetime">{{ entry.entry.date.strftime('%B %d, %Y') }}</time>
+                <p>
+                {% for tag in entry.entry.get_tags() %}
+                    <a class="button icon-left" href="{{ url_for('tags', slug=tag.slug) }}"><span>{{ tag.tag }}</span> <i class="material-icons">tag</i></a>&nbsp;
+                {% endfor %}
+                </p>
+            </article>
+        {% endfor %}
+{% endblock %}
