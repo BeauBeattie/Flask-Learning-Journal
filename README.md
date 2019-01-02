@@ -1,5 +1,13 @@
 # Flask Learning Journal
 
+Once project has been cloned, update packages with requirements.txt.
+
+You can log into admin view of this application with the login button at the bottom of the website.
+
+username: admin
+password: password
+
+
 REQUIREMENTS
 Create “list” view using the route /entries. The list view contains a list of journal entries, which displays Title and Date for Entry. Title should be hyperlinked to the detail page for each journal entry. Include a link to add an entry.
 Create “details” view with the route “/details” displaying the journal entry with all fields: Title, Date, Time Spent, What You Learned, Resources to Remember. Include a link to edit the entry.

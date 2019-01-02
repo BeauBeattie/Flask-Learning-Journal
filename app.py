@@ -5,8 +5,6 @@ from flask_login import (LoginManager, login_user, logout_user,
                          login_required, current_user)
 from slugify import slugify
 
-import re
-
 import forms
 import models
 
@@ -25,6 +23,7 @@ login_manager.login_view = 'login'
 
 @login_manager.user_loader
 def load_user(userid):
+    """ Get user """
     try:
         return models.User.get(models.User.id == userid)
     except models.DoesNotExist:
@@ -33,6 +32,7 @@ def load_user(userid):
 
 @app.before_request
 def before_request():
+    """ Before request open database """
     g.db = models.DATABASE
     g.db.connect()
     g.user = current_user
@@ -40,12 +40,14 @@ def before_request():
 
 @app.after_request
 def after_request(response):
+    """ after request close db """
     g.db.close()
     return response
 
 
 @app.route('/login', methods=('GET', 'POST'))
 def login():
+    """ Login to site """
     form = forms.LoginForm()
     if form.validate_on_submit():
         try:
@@ -65,14 +67,16 @@ def login():
 @app.route('/logout')
 @login_required
 def logout():
+    """ Logout from site """
     logout_user()
     flash("You've been logged out! Come back soon!", "success")
     return redirect(url_for('index'))
 
 
-@app.route('/new', methods=('GET', 'POST'))
+@app.route('/entry', methods=('GET', 'POST'))
 @login_required
 def add():
+    """ Add an entry to database """
     # if the form is submitted
     form = forms.EntryForm()
     tag_form = forms.TagForm()
@@ -102,7 +106,7 @@ def add():
     return render_template('new.html', form=form, tag_form=tag_form)
 
 
-@app.route('/detail/<slug>')
+@app.route('/entries/<slug>')
 def detail(slug):
     """Shows the details of a specific blog post"""
     try:
@@ -126,9 +130,10 @@ def delete(slug):
     return redirect(url_for('index'))
 
 
-@app.route("/edit/<slug>", methods=('POST', 'GET'))
+@app.route("/entries/edit/<slug>", methods=('POST', 'GET'))
 @login_required
 def edit(slug):
+    """ Add the ability to edit an entry """
     try:
         entry = models.Entry.select().where(models.Entry.slug == slug).get()
         tags = models.Tag.select().where(models.Tag.entry == entry)
@@ -169,10 +174,10 @@ def edit(slug):
                            entry=entry, entry_tags=entry_tags)
 
 
-@app.route("/all_tags")
+@app.route("/tags")
 def all_tags():
+    """ Collects all the unique tags to display"""
     unique_tags = []
-    all_tags = []
     all_tags = models.Tag.select(models.Tag.tag, models.Tag.slug).distinct()
     for tag in all_tags:
         if tag.tag not in unique_tags:
@@ -182,6 +187,7 @@ def all_tags():
 
 @app.route("/tags/<slug>")
 def tags(slug):
+    """ Renders tags/'tag' search page"""
     entries = models.Tag.select().distinct().where(models.Tag.slug == slug)
     return render_template('tags.html', entries=entries, slug=slug)
 
@@ -194,6 +200,7 @@ def not_found(error):
 
 @app.route('/')
 def index():
+    """ Index page for stream of posts"""
     entries = models.Entry.select()
     return render_template('index.html', entries=entries)
 

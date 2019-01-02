@@ -1,7 +1,6 @@
 from flask_bcrypt import generate_password_hash
 from flask_login import UserMixin
 from peewee import *
-import datetime
 
 
 DATABASE = SqliteDatabase('worklog.db')
@@ -37,6 +36,7 @@ class Entry(BaseModel):
     slug = CharField(unique=True)
 
     def get_tags(self):
+        """ Return tags related to post """
         return Tag.select().where(Tag.entry == self)
 
 
@@ -47,6 +47,7 @@ class Tag(BaseModel):
 
 
 def initialize():
+    """ Initialize and create the database/tables """
     DATABASE.connect()
     DATABASE.create_tables([User, Entry, Tag], safe=True)
     DATABASE.close()
